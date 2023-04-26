@@ -1,15 +1,58 @@
 version: '3.1'
+
 services:
-  stats-server:
-    ports:
-      - "9090:9090"
 
   stats-db:
     image: postgres:14-alpine
-
-  ewm-service:
+    volumes:
+      - /var/lib/postgresql/data/
     ports:
-      - "8080:8080"
+      - "6541:5432"
+    environment:
+      - POSTGRES_DB=explore-stats
+      - POSTGRES_USER=vetal
+      - POSTGRES_PASSWORD=9379992
 
-  ewm-db:
-    image: postgres:14-alpine
+
+  stats-server:
+    build: stats/stats-server
+    image: stats-server
+    ports:
+      - "9090:9090"
+    depends_on:
+      - stats-db
+    environment:
+      - DB_NAME=explore-stats
+      - POSTGRES_USER=vetal
+      - POSTGRES_PASSWORD=9379992
+      - DB_HOST=stats-db
+      - DB_PORT=5432
+
+
+#  ewm-db:
+#    image: postgres:14-alpine
+#    volumes:
+#      - /var/lib/postgresql/data/
+#    ports:
+#      - "6542:5432"
+#    environment:
+#      - POSTGRES_DB=explore-main
+#      - POSTGRES_USER=vetal
+#      - POSTGRES_PASSWORD=9379992
+#
+#
+#  ewm-service:
+#    build: main-service
+#    image: main-service
+#    ports:
+#      - "8080:8080"
+#    depends_on:
+#      - ewm-db
+#      - stats-server
+#    environment:
+#      - STATS_SERVER_URI=http://server:9090
+#      - DB_NAME=explore-main
+#      - POSTGRES_USER=vetal
+#      - POSTGRES_PASSWORD=9379992
+#      - DB_HOST=db
+#      - DB_PORT=5432
