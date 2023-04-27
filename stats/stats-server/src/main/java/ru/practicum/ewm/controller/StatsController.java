@@ -15,8 +15,8 @@ public class StatsController {
     private final StatsService service;
 
     @PostMapping("/hit")
-    public EndpointHit saveDataRequest(@RequestBody EndpointHit endpointHit) {
-        return service.saveDataRequest(endpointHit);
+    public void saveDataRequest(@RequestBody EndpointHit endpointHit) {
+        service.saveDataRequest(endpointHit);
     }
 
     @GetMapping("/stats")

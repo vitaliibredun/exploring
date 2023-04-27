@@ -29,30 +29,30 @@ services:
       - DB_PORT=5432
 
 
-#  ewm-db:
-#    image: postgres:14-alpine
-#    volumes:
-#      - /var/lib/postgresql/data/
-#    ports:
-#      - "6542:5432"
-#    environment:
-#      - POSTGRES_DB=explore-main
-#      - POSTGRES_USER=vetal
-#      - POSTGRES_PASSWORD=9379992
-#
-#
-#  ewm-service:
-#    build: main-service
-#    image: main-service
-#    ports:
-#      - "8080:8080"
-#    depends_on:
-#      - ewm-db
-#      - stats-server
-#    environment:
-#      - STATS_SERVER_URI=http://server:9090
-#      - DB_NAME=explore-main
-#      - POSTGRES_USER=vetal
-#      - POSTGRES_PASSWORD=9379992
-#      - DB_HOST=db
-#      - DB_PORT=5432
+  ewm-db:
+    image: postgres:14-alpine
+    volumes:
+      - /var/lib/postgresql/data/
+    ports:
+      - "6542:5432"
+    environment:
+      - POSTGRES_DB=explore-main
+      - POSTGRES_USER=vetal
+      - POSTGRES_PASSWORD=9379992
+
+
+  ewm-service:
+    build: main-service
+    image: main-service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - ewm-db
+      - stats-server
+    environment:
+      - STATS_SERVER_URI=http://server:9090
+      - DB_NAME=explore-main
+      - POSTGRES_USER=vetal
+      - POSTGRES_PASSWORD=9379992
+      - DB_HOST=ewm-db
+      - DB_PORT=5432

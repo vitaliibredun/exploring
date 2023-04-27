@@ -20,10 +20,9 @@ public class StatsServiceImpl implements StatsService {
     private final StatsMapper mapper;
 
     @Override
-    public EndpointHit saveDataRequest(EndpointHit endpointHit) {
+    public void saveDataRequest(EndpointHit endpointHit) {
         Stat stat = mapper.toModel(endpointHit);
-        Stat statFromRepository = repository.save(stat);
-        return mapper.toDto(statFromRepository);
+        repository.save(stat);
     }
 
     @Override

@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.exceptions.WrongParamUniqueException;
+import ru.practicum.ewm.model.Stat;
 import ru.practicum.ewm.repository.StatsRepository;
 import ru.practicum.ewm.service.StatsService;
 
@@ -50,7 +51,8 @@ public class StatsServiceImplTest {
     void saveDataRequestTest() {
         assertThat(repository.findAll(), empty());
 
-        EndpointHit statFromRepository = service.saveDataRequest(endpointHit1);
+        service.saveDataRequest(endpointHit1);
+        Stat statFromRepository = repository.findAll().get(0);
 
         assertThat(repository.findAll(), notNullValue());
         assertThat(statFromRepository.getId(), notNullValue());

@@ -47,25 +47,18 @@ public class StatsControllerTests {
 
     @Test
     void saveDataRequest() throws Exception {
-        when(service.saveDataRequest(any(EndpointHit.class)))
-                .thenReturn(endpointHit);
-
         mvc.perform(post("/hit")
                         .content(mapper.writeValueAsString(endpointHit))
                         .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.app", is(endpointHit.getApp())))
-                .andExpect(jsonPath("$.uri", is(endpointHit.getUri())))
-                .andExpect(jsonPath("$.ip", is(endpointHit.getIp())));
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 
     @Test
     void getStats() throws Exception {
         Integer expectedSize = 2;
 
-        when(service.getStats(anyString(), anyString(), anyList(), anyString()))
+        when(service.getStats(any(), any(), any(), any()))
                 .thenReturn(List.of(viewStats1, viewStats2));
 
         mvc.perform(get("/stats")
@@ -73,11 +66,14 @@ public class StatsControllerTests {
                         .param("end", "2023-12-15 11:30:00")
                         .characterEncoding(StandardCharsets.UTF_8)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk()); //fixme
-//                .andExpect(jsonPath("size()", is(expectedSize)))
-//                .andExpect(jsonPath("$.[0].app", is(viewStats1.getApp())))
-//                .andExpect(jsonPath("$.[0].uri", is(viewStats1.getUri())))
-//                .andExpect(jsonPath("$.[0].hits", is(viewStats1.getHits())));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("size()", is(expectedSize)))
+                .andExpect(jsonPath("$.[0].app", is(viewStats1.getApp())))
+                .andExpect(jsonPath("$.[0].uri", is(viewStats1.getUri())))
+                .andExpect(jsonPath("$.[0].hits", is(viewStats1.getHits().intValue())))
+                .andExpect(jsonPath("$.[1].app", is(viewStats2.getApp())))
+                .andExpect(jsonPath("$.[1].uri", is(viewStats2.getUri())))
+                .andExpect(jsonPath("$.[1].hits", is(viewStats2.getHits().intValue())));
     }
 
     private ViewStats makeViewStats(String uri, Long hits) {

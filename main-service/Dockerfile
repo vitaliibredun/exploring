@@ -1,3 +1,3 @@
-FROM amazoncorretto:11-alpine-jdk
+FROM azul/zulu-openjdk:11.0.18
 COPY target/*.jar app.jar
 ENTRYPOINT ["java","-jar","/app.jar"]
