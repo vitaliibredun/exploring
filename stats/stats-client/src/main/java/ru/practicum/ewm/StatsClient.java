@@ -15,7 +15,7 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 public class StatsClient {
-    @Value("${stats-server.url}")
+    @Value("http://localhost:9090")
     private String serverUrl;
     private static final String API_SAVE = "/hit";
     private static final String API_GET = "/stats?";
@@ -23,7 +23,7 @@ public class StatsClient {
     private static final String END_PARAM = "&end=";
     private static final String URIS_PARAM = "&uris=";
     private static final String UNIQUE_PARAM = "&unique=";
-    private final RestTemplate restTemplate;
+    private final RestTemplate restTemplate = new RestTemplate();
 
     public void saveStats(EndpointHit endpointHit) {
         restTemplate.postForLocation(serverUrl + API_SAVE, endpointHit);
