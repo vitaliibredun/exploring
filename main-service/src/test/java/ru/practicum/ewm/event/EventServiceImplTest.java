@@ -179,19 +179,19 @@ public class EventServiceImplTest {
         assertThat("Event with id was not found", is(exception.getMessage()));
     }
 
-    //    @Test
-    //        void verifyNotOwnerOfEventException() {
-    //        Long userId = 1L;
-    //        Long eventId = 1L;
-    //        Long notOwner = 100L;
-    //        eventService.addEvent(userId, newEventDto1);
-    //
-    //        final ConflictException exception = assertThrows(
-    //                ConflictException.class,
-    //                () -> eventService.updateEvent(notOwner, eventId, updateEvent));
-    //
-    //        assertThat("Only owner of event can makes changes", is(exception.getMessage()));
-    //    }
+        @Test
+            void verifyNotOwnerOfEventException() {
+            Long userId = 1L;
+            Long eventId = 1L;
+            Long notOwner = 100L;
+            eventService.addEvent(userId, newEventDto1);
+
+            final ConflictException exception = assertThrows(
+                    ConflictException.class,
+                    () -> eventService.updateEvent(notOwner, eventId, updateEvent));
+
+            assertThat("Only owner of event can makes changes", is(exception.getMessage()));
+        }
 
     @Test
     void verifyChangePublishedEventException() {

@@ -20,8 +20,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "where (e.initiator.id in ?1 or ?1 is null) " +
             "and (e.state in ?2 or ?2 is null) " +
             "and (e.category.id in ?3 or ?3 is null) " +
-            "and (e.eventDate > ?4 or ?4 is null) " +
-            "and (e.eventDate < ?5 or ?5 is null)")
+            "and (e.eventDate > cast(?4 as timestamp )   or cast(?4 as timestamp ) is null) " +
+            "and (e.eventDate < cast(?5 as timestamp ) or cast(?5 as timestamp ) is null)")
     List<Event> searchEventsByAdmin(List<Long> users,
                                     List<EventState> states,
                                     List<Long> categories,
