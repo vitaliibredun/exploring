@@ -5,7 +5,6 @@ import lombok.*;
 import ru.practicum.ewm.admin.constants.StateAction;
 import ru.practicum.ewm.location.dto.LocationDto;
 
-import javax.validation.constraints.FutureOrPresent;
 import java.time.LocalDateTime;
 
 @Getter
@@ -17,7 +16,6 @@ public class UpdateEventAdmin {
     private String annotation;
     private Long category;
     private String description;
-    @FutureOrPresent
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
     private LocationDto location;

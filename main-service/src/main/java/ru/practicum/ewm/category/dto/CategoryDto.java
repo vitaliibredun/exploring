@@ -11,6 +11,6 @@ import javax.validation.constraints.NotEmpty;
 @NoArgsConstructor
 public class CategoryDto {
     private Long id;
-    @NotEmpty(message = "The name field is empty")
+    @NotEmpty(message = "The field of name is empty")
     private String name;
 }

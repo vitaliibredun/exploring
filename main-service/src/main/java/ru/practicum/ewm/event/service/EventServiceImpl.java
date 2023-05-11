@@ -20,7 +20,6 @@ import ru.practicum.ewm.event.dto.EventShortDto;
 import ru.practicum.ewm.event.mapper.EventMapper;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.event.repository.EventRepository;
-import ru.practicum.ewm.exception.BadRequestException;
 import ru.practicum.ewm.exception.ConflictException;
 import ru.practicum.ewm.exception.NotExistsException;
 import ru.practicum.ewm.location.model.Location;
@@ -455,23 +454,6 @@ public class EventServiceImpl implements EventService {
     }
 
     private void doValidation(NewEventDto eventDto) {
-        boolean annotationIsNull = eventDto.getAnnotation() == null;
-        boolean categoryIsNull = eventDto.getCategory() == null;
-        boolean descriptionIsNull = eventDto.getDescription() == null;
-        boolean eventDateIsNull = eventDto.getEventDate() == null;
-        boolean locationIsNull = eventDto.getLocation() == null;
-        boolean paidIsNull = eventDto.getPaid() == null;
-        boolean participantLimitIsNull = eventDto.getParticipantLimit() == null;
-        boolean requestModerationIsNull = eventDto.getRequestModeration() == null;
-        boolean titleIsNull = eventDto.getTitle() == null;
-
-        if (annotationIsNull || categoryIsNull || descriptionIsNull || eventDateIsNull
-                || locationIsNull || paidIsNull || participantLimitIsNull || requestModerationIsNull || titleIsNull) {
-
-            log.error("Error: the fields of event must not be null");
-            throw new BadRequestException("The fields of event must not be null");
-        }
-
         boolean eventDateLessThenAnHour = eventDto.getEventDate().isBefore(LocalDateTime.now().plusHours(2));
         if (eventDateLessThenAnHour) {
             log.error("Field: eventDate. Error: The time of event less then 2 hours from current time");

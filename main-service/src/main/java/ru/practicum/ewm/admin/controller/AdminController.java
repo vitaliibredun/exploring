@@ -18,9 +18,11 @@ import ru.practicum.ewm.event.service.EventService;
 import ru.practicum.ewm.user.dto.UserDto;
 import ru.practicum.ewm.user.service.UserService;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
+
 
 @RestController
 @RequestMapping(path = "/admin")
@@ -33,7 +35,7 @@ public class AdminController {
 
     @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto addUser(@RequestBody UserDto userDto) {
+    public UserDto addUser(@Valid @RequestBody UserDto userDto) {
         return userService.addUser(userDto);
     }
 
@@ -55,13 +57,13 @@ public class AdminController {
 
     @PostMapping("/categories")
     @ResponseStatus(HttpStatus.CREATED)
-    public CategoryDto addCategory(@RequestBody NewCategoryDto categoryDto) {
+    public CategoryDto addCategory(@Valid @RequestBody NewCategoryDto categoryDto) {
         return categoryService.addCategory(categoryDto);
     }
 
     @PatchMapping("/categories/{catId}")
     @ResponseStatus(HttpStatus.OK)
-    public CategoryDto updateCategory(@PathVariable Long catId, @RequestBody NewCategoryDto categoryDto) {
+    public CategoryDto updateCategory(@PathVariable Long catId, @Valid @RequestBody NewCategoryDto categoryDto) {
         return categoryService.updateCategory(catId, categoryDto);
     }
 
@@ -94,7 +96,7 @@ public class AdminController {
 
     @PostMapping("/compilations")
     @ResponseStatus(HttpStatus.CREATED)
-    public CompilationDto addCompilation(@RequestBody NewCompilationDto compilationDto) {
+    public CompilationDto addCompilation(@Valid @RequestBody NewCompilationDto compilationDto) {
         return compilationService.addCompilation(compilationDto);
     }
 
@@ -106,7 +108,7 @@ public class AdminController {
 
     @PatchMapping("/compilations/{compId}")
     @ResponseStatus(HttpStatus.OK)
-    public CompilationDto updateCompilation(@PathVariable Long compId, @RequestBody UpdateCompilationDto updateCompilationDto) {
+    public CompilationDto updateCompilation(@PathVariable Long compId, @Valid @RequestBody UpdateCompilationDto updateCompilationDto) {
         return compilationService.updateCompilation(compId, updateCompilationDto);
     }
 }

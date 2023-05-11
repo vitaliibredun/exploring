@@ -2,8 +2,8 @@ package ru.practicum.ewm.exception.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -14,8 +14,6 @@ import ru.practicum.ewm.exception.NotExistsException;
 import ru.practicum.ewm.exception.model.ApiError;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestControllerAdvice
 @Slf4j
@@ -75,16 +73,25 @@ public class ErrorHandler {
         return error;
     }
 
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleValidationExceptions(
-            MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        return errors;
+    public ApiError handleMethodArgumentNotValidException(final MethodArgumentNotValidException exception) {
+        log.warn("400 {}", exception.getMessage(), exception);
+        ApiError error = new ApiError();
+        error.setMessage(exception.getLocalizedMessage());
+        error.setStatus(HttpStatus.BAD_REQUEST.name());
+        error.setTimestamp(LocalDateTime.now());
+        return error;
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleMissingServletRequestParameterException(final MissingServletRequestParameterException exception) {
+        log.warn("400 {}", exception.getMessage(), exception);
+        ApiError error = new ApiError();
+        error.setMessage(exception.getLocalizedMessage());
+        error.setStatus(HttpStatus.BAD_REQUEST.name());
+        error.setTimestamp(LocalDateTime.now());
+        return error;
     }
 }

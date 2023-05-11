@@ -10,7 +10,6 @@ import ru.practicum.ewm.category.dto.NewCategoryDto;
 import ru.practicum.ewm.category.mapper.CategoryMapper;
 import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.category.repository.CategoryRepository;
-import ru.practicum.ewm.exception.BadRequestException;
 import ru.practicum.ewm.exception.ConflictException;
 import ru.practicum.ewm.exception.NotExistsException;
 
@@ -30,7 +29,6 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     public CategoryDto addCategory(NewCategoryDto categoryDto) {
         try {
-            checkCategoryOnNull(categoryDto);
             Category category = mapper.toModel(categoryDto);
             Category categoryFromRepository = repository.save(category);
             return mapper.toDto(categoryFromRepository);
@@ -44,12 +42,11 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     public CategoryDto updateCategory(Long catId, NewCategoryDto categoryDto) {
         try {
-            checkCategoryOnNull(categoryDto);
             Category newCategory = mapper.toModel(categoryDto);
             Category oldCategory = checkCategoryExist(catId);
-            Category updatedCategory = doUpdate(oldCategory, newCategory);
-            Category categoryFromRepository = repository.saveAndFlush(updatedCategory);
-            return mapper.toDto(categoryFromRepository);
+            oldCategory.setName(newCategory.getName());
+            Category updatedCategory = repository.saveAndFlush(oldCategory);
+            return mapper.toDto(updatedCategory);
         } catch (DataIntegrityViolationException exception) {
             log.error("Field: name. Error: the same name");
             throw new ConflictException("The field of name must be unique");
@@ -78,19 +75,6 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryDto getCategory(Long catId) {
         Category category = checkCategoryExist(catId);
         return mapper.toDto(category);
-    }
-
-    private void checkCategoryOnNull(NewCategoryDto categoryDto) {
-        boolean noName = categoryDto.getName() == null;
-        if (noName) {
-            log.error("Field: name. Error: the field name must not be null");
-            throw new BadRequestException("The field name must not be null");
-        }
-    }
-
-    private Category doUpdate(Category oldCategory, Category newCategory) {
-        oldCategory.setName(newCategory.getName());
-        return oldCategory;
     }
 
     private Category checkCategoryExist(Long catId) {

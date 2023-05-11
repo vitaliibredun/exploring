@@ -14,6 +14,7 @@ import ru.practicum.ewm.request.dto.EventRequestStatus;
 import ru.practicum.ewm.request.service.RequestService;
 import ru.practicum.ewm.request.dto.RequestToEvent;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
@@ -27,7 +28,7 @@ public class UserController {
 
     @PostMapping("/{userId}/events")
     @ResponseStatus(HttpStatus.CREATED)
-    public EventFullDto addEvent(@PathVariable Long userId, @RequestBody NewEventDto eventDto) {
+    public EventFullDto addEvent(@PathVariable Long userId, @Valid @RequestBody NewEventDto eventDto) {
         return eventService.addEvent(userId, eventDto);
     }
 
@@ -35,7 +36,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     public EventFullDto updateEvent(@PathVariable Long userId,
                                     @PathVariable Long eventId,
-                                    @RequestBody UpdateEvent updateEvent) {
+                                    @Valid @RequestBody UpdateEvent updateEvent) {
 
         return eventService.updateEvent(userId, eventId, updateEvent);
     }

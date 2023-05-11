@@ -10,6 +10,6 @@ import javax.validation.constraints.NotEmpty;
 @AllArgsConstructor
 @NoArgsConstructor
 public class NewCategoryDto {
-    @NotEmpty(message = "The name field is empty")
+    @NotEmpty(message = "The field of name is empty")
     private String name;
 }

@@ -14,7 +14,6 @@ import ru.practicum.ewm.event.dto.EventShortDto;
 import ru.practicum.ewm.event.mapper.EventMapper;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.event.service.EventService;
-import ru.practicum.ewm.exception.BadRequestException;
 import ru.practicum.ewm.exception.NotExistsException;
 
 import java.util.ArrayList;
@@ -34,7 +33,6 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     public CompilationDto addCompilation(NewCompilationDto compilationDto) {
-        checkCompilationOnNull(compilationDto);
         Set<Long> eventsIds = compilationDto.getEvents();
         List<Event> events = checkListEvents(eventsIds);
         Compilation compilation = compilationMapper.toModel(compilationDto, events);
@@ -116,15 +114,5 @@ public class CompilationServiceImpl implements CompilationService {
             return new ArrayList<>();
         }
         return eventService.getAllEventsByIds(eventsIds);
-    }
-
-    private void checkCompilationOnNull(NewCompilationDto compilationDto) {
-        boolean eventsIsNull = compilationDto.getEvents() == null;
-        boolean pinnedIsNull = compilationDto.getPinned() == null;
-        boolean titleIsNull = compilationDto.getTitle() == null;
-        if (eventsIsNull || pinnedIsNull || titleIsNull) {
-            log.error("Error: the fields of compilation must not be null");
-            throw new BadRequestException("The fields of compilation must not be null");
-        }
     }
 }

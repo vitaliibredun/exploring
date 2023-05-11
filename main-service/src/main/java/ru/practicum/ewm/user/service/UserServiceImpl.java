@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import ru.practicum.ewm.exception.BadRequestException;
 import ru.practicum.ewm.exception.ConflictException;
 import ru.practicum.ewm.exception.NotExistsException;
 import ru.practicum.ewm.user.dto.UserDto;
@@ -29,7 +28,6 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDto addUser(UserDto userDto) {
         try {
-            checkUserOnNull(userDto);
             User user = mapper.toModel(userDto);
             User userFromRepository = repository.save(user);
             return mapper.toDto(userFromRepository);
@@ -60,14 +58,5 @@ public class UserServiceImpl implements UserService {
             throw new NotExistsException("User with id was not found");
         }
         return user.get();
-    }
-
-    private void checkUserOnNull(UserDto userDto) {
-        boolean noName = userDto.getName() == null;
-        boolean noEmail = userDto.getEmail() == null;
-        if (noName || noEmail) {
-            log.error("Error: the fields of user must not be empty");
-            throw new BadRequestException("The fields of user must not be empty");
-        }
     }
 }

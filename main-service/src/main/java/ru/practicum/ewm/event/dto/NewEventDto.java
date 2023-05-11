@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import ru.practicum.ewm.location.dto.LocationDto;
 
-import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -21,10 +20,10 @@ public class NewEventDto {
     private Long category;
     @NotEmpty(message = "The description field is empty")
     private String description;
-    @NotEmpty(message = "The eventDate field is empty")
-    @FutureOrPresent
+    @NotNull(message = "The eventDate field is empty")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
+    @NotNull
     private LocationDto location;
     @NotNull(message = "The paid field is empty")
     private Boolean paid;
