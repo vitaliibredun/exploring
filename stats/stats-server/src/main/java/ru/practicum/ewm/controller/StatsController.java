@@ -1,6 +1,7 @@
 package ru.practicum.ewm.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.service.StatsService;
 import ru.practicum.ewm.ViewStats;
@@ -16,11 +17,13 @@ public class StatsController {
     private final StatsService service;
 
     @PostMapping("/hit")
+    @ResponseStatus(HttpStatus.CREATED)
     public void saveDataRequest(@Valid @RequestBody EndpointHit endpointHit) {
         service.saveDataRequest(endpointHit);
     }
 
     @GetMapping("/stats")
+    @ResponseStatus(HttpStatus.OK)
     public List<ViewStats> getStats(
             @RequestParam String start,
             @RequestParam String end,
