@@ -18,9 +18,9 @@ public class Location {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "lat")
-    private Float latitude;
+    private Float lat;
     @Column(name = "lon")
-    private Float longitude;
+    private Float lon;
 
     @Override
     public boolean equals(Object o) {

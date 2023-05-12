@@ -21,7 +21,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ApiError handleException(final Exception exception) {
-        log.warn("500 {}", exception.getMessage(), exception);
+        log.error("500 {}", exception.getMessage(), exception);
         ApiError error = new ApiError();
         error.setMessage(exception.getMessage());
         error.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.name());
@@ -32,7 +32,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ApiError handleNotExistsException(final NotExistsException exception) {
-        log.warn("404 {}", exception.getMessage(), exception);
+        log.error("404 {}", exception.getMessage(), exception);
         ApiError error = new ApiError();
         error.setMessage(exception.getMessage());
         error.setStatus(HttpStatus.NOT_FOUND.name());
@@ -43,7 +43,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ApiError handleNotExistsException(final IncorrectInputException exception) {
-        log.warn("403 {}", exception.getMessage(), exception);
+        log.error("403 {}", exception.getMessage(), exception);
         ApiError error = new ApiError();
         error.setMessage(exception.getMessage());
         error.setStatus(HttpStatus.FORBIDDEN.name());
@@ -54,7 +54,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
     public ApiError handleConflictException(final ConflictException exception) {
-        log.warn("409 {}", exception.getMessage(), exception);
+        log.error("409 {}", exception.getMessage(), exception);
         ApiError error = new ApiError();
         error.setMessage(exception.getMessage());
         error.setStatus(HttpStatus.CONFLICT.name());
@@ -65,7 +65,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError handleBadRequestException(final BadRequestException exception) {
-        log.warn("400 {}", exception.getMessage(), exception);
+        log.error("400 {}", exception.getMessage(), exception);
         ApiError error = new ApiError();
         error.setMessage(exception.getMessage());
         error.setStatus(HttpStatus.BAD_REQUEST.name());
@@ -76,7 +76,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError handleMethodArgumentNotValidException(final MethodArgumentNotValidException exception) {
-        log.warn("400 {}", exception.getMessage(), exception);
+        log.error("400 {}", exception.getMessage(), exception);
         ApiError error = new ApiError();
         error.setMessage(exception.getLocalizedMessage());
         error.setStatus(HttpStatus.BAD_REQUEST.name());
@@ -87,7 +87,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError handleMissingServletRequestParameterException(final MissingServletRequestParameterException exception) {
-        log.warn("400 {}", exception.getMessage(), exception);
+        log.error("400 {}", exception.getMessage(), exception);
         ApiError error = new ApiError();
         error.setMessage(exception.getLocalizedMessage());
         error.setStatus(HttpStatus.BAD_REQUEST.name());

@@ -283,7 +283,7 @@ public class AdminControllerTest {
         builder.annotation("annotation");
         builder.category(1L);
         builder.description("description");
-        builder.location(LocationDto.builder().latitude(55.754167F).longitude(37.6232F).build());
+        builder.location(LocationDto.builder().lat(55.754167F).lon(37.6232F).build());
         builder.paid(true);
         builder.participantLimit(10L);
         builder.requestModeration(true);
@@ -300,7 +300,7 @@ public class AdminControllerTest {
         builder.category(CategoryDto.builder().id(1L).name("name").build());
         builder.description("description");
         builder.initiator(UserShortDto.builder().id(1L).name("John").build());
-        builder.location(LocationDto.builder().latitude(55.754167F).longitude(37.6232F).build());
+        builder.location(LocationDto.builder().lat(55.754167F).lon(37.6232F).build());
         builder.paid(true);
         builder.participantLimit(10L);
         builder.requestModeration(true);

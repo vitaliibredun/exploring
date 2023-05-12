@@ -13,8 +13,8 @@ public interface LocationMapper {
 
         Location.LocationBuilder builder = Location.builder();
 
-        builder.latitude(locationDto.getLatitude());
-        builder.longitude(locationDto.getLongitude());
+        builder.lat(locationDto.getLat());
+        builder.lon(locationDto.getLon());
 
         return builder.build();
     }
@@ -26,8 +26,8 @@ public interface LocationMapper {
 
         LocationDto.LocationDtoBuilder builder = LocationDto.builder();
 
-        builder.latitude(location.getLatitude());
-        builder.longitude(location.getLongitude());
+        builder.lat(location.getLat());
+        builder.lon(location.getLon());
 
         return builder.build();
     }

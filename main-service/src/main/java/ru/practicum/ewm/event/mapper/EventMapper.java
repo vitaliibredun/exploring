@@ -54,7 +54,7 @@ public interface EventMapper {
         builder.initiator(UserShortDto
                 .builder().id(event.getInitiator().getId()).name(event.getInitiator().getName()).build());
         builder.location(LocationDto
-                .builder().latitude(event.getLocation().getLatitude()).longitude(event.getLocation().getLongitude()).build());
+                .builder().lat(event.getLocation().getLat()).lon(event.getLocation().getLon()).build());
         builder.paid(event.getPaid());
         builder.participantLimit(event.getParticipantLimit());
         builder.publishedOn(event.getPublishedOn());

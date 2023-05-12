@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class LocationDto {
     @NotNull(message = "The field of latitude  is empty")
-    private Float latitude;
+    private Float lat;
     @NotNull(message = "The field of longitude  is empty")
-    private Float longitude;
+    private Float lon;
 }

@@ -501,7 +501,7 @@ public class RequestServiceImplTest {
 
         builder.annotation("annotation");
         builder.eventDate(LocalDateTime.now().plusDays(1));
-        builder.location(LocationDto.builder().latitude(38.3234F).longitude(84.342F).build());
+        builder.location(LocationDto.builder().lat(38.3234F).lon(84.342F).build());
         builder.category(1L);
         builder.description("description");
         builder.paid(true);

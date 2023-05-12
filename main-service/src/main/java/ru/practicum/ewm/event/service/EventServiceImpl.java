@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.EndpointHit;
 import ru.practicum.ewm.StatsClient;
+import ru.practicum.ewm.ViewStats;
 import ru.practicum.ewm.admin.constants.StateAction;
 import ru.practicum.ewm.admin.dto.UpdateEventAdmin;
 import ru.practicum.ewm.category.model.Category;
@@ -148,6 +149,8 @@ public class EventServiceImpl implements EventService {
         List<Event> checkedEvents = checkEventsAvailableLimit(onlyAvailable, eventsWithConfirmedRequests);
         checkedEvents.forEach(eventRepository::saveAndFlush);
         saveStats(httpServletRequest);
+        List<ViewStats> stats = statsClient.getStats(LocalDateTime.now().minusYears(2), LocalDateTime.now().plusYears(2), List.of("/events"), false);
+        System.out.println(stats);
 
         if (sort != null) {
             switch (sort) {

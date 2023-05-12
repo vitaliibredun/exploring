@@ -101,8 +101,8 @@ public class EventServiceImplTest {
         assertThat(newEventDto1.getCategory(), is(eventFromRepository.getCategory().getId()));
         assertThat(newEventDto1.getPaid(), is(eventFromRepository.getPaid()));
         assertThat(newEventDto1.getTitle(), is(eventFromRepository.getTitle()));
-        assertThat(newEventDto1.getLocation().getLatitude(), is(eventFromRepository.getLocation().getLatitude()));
-        assertThat(newEventDto1.getLocation().getLongitude(), is(eventFromRepository.getLocation().getLongitude()));
+        assertThat(newEventDto1.getLocation().getLat(), is(eventFromRepository.getLocation().getLat()));
+        assertThat(newEventDto1.getLocation().getLon(), is(eventFromRepository.getLocation().getLon()));
     }
 
     @Test
@@ -222,8 +222,8 @@ public class EventServiceImplTest {
         assertThat(newEventDto1.getCategory(), is(eventFromRepository.getCategory().getId()));
         assertThat(newEventDto1.getPaid(), is(eventFromRepository.getPaid()));
         assertThat(newEventDto1.getTitle(), is(eventFromRepository.getTitle()));
-        assertThat(newEventDto1.getLocation().getLatitude(), is(eventFromRepository.getLocation().getLatitude()));
-        assertThat(newEventDto1.getLocation().getLongitude(), is(eventFromRepository.getLocation().getLongitude()));
+        assertThat(newEventDto1.getLocation().getLat(), is(eventFromRepository.getLocation().getLat()));
+        assertThat(newEventDto1.getLocation().getLon(), is(eventFromRepository.getLocation().getLon()));
     }
 
     @Test
@@ -487,7 +487,7 @@ public class EventServiceImplTest {
         builder.annotation("annotation");
         builder.description("description");
         builder.eventDate(LocalDateTime.now().plusDays(1));
-        builder.location(LocationDto.builder().latitude(38.3234F).longitude(84.342F).build());
+        builder.location(LocationDto.builder().lat(38.3234F).lon(84.342F).build());
         builder.category(category);
         builder.paid(true);
         builder.participantLimit(0L);
