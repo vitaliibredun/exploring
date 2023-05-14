@@ -15,7 +15,7 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 public class StatsClient {
-    @Value("http://stats-server:9090")
+    @Value("${stats-server.url:http://localhost:9090}")
     private String serverUrl;
     private static final String API_SAVE = "/hit";
     private static final String API_GET = "/stats?";
