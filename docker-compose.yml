@@ -13,7 +13,6 @@ services:
       - POSTGRES_USER=vetal
       - POSTGRES_PASSWORD=9379992
 
-
   stats-server:
     build: stats/stats-server
     image: stats-server
@@ -23,10 +22,10 @@ services:
       - stats-db
     environment:
       - DB_NAME=explore-stats
-      - POSTGRES_USER=vetal
-      - POSTGRES_PASSWORD=9379992
       - DB_HOST=stats-db
       - DB_PORT=5432
+      - POSTGRES_USER=vetal
+      - POSTGRES_PASSWORD=9379992
 
 
   ewm-db:
@@ -40,7 +39,6 @@ services:
       - POSTGRES_USER=vetal
       - POSTGRES_PASSWORD=9379992
 
-
   ewm-service:
     build: main-service
     image: main-service
@@ -50,9 +48,8 @@ services:
       - ewm-db
       - stats-server
     environment:
-      - STATS_SERVER_URI=http://server:9090
       - DB_NAME=explore-main
-      - POSTGRES_USER=vetal
-      - POSTGRES_PASSWORD=9379992
       - DB_HOST=ewm-db
       - DB_PORT=5432
+      - POSTGRES_USER=vetal
+      - POSTGRES_PASSWORD=9379992

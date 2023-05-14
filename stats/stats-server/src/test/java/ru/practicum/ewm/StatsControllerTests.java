@@ -58,7 +58,7 @@ public class StatsControllerTests {
     void getStats() throws Exception {
         Integer expectedSize = 2;
 
-        when(service.getStats(any(), any(), any(), any()))
+        when(service.getStats(anyString(), anyString(), any(), anyString()))
                 .thenReturn(List.of(viewStats1, viewStats2));
 
         mvc.perform(get("/stats")
