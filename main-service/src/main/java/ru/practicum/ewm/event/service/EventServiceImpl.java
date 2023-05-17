@@ -91,7 +91,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Event getEventById(Long eventId) {
+    public Event findEventById(Long eventId) {
         Optional<Event> event = eventRepository.findById(eventId);
         if (event.isEmpty()) {
             log.error("Event with id = {} was not found", event);

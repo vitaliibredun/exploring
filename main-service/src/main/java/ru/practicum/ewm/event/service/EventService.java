@@ -24,7 +24,7 @@ public interface EventService {
 
     List<EventShortDto> getAllEventsByUser(Long userId, Pageable pageable);
 
-    Event getEventById(Long eventId);
+    Event findEventById(Long eventId);
 
     EventFullDto updateEventByAdmin(Long eventId, UpdateEventAdmin updateEvent);
 

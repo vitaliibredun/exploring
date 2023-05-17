@@ -8,6 +8,9 @@ import ru.practicum.ewm.admin.dto.UpdateEventAdmin;
 import ru.practicum.ewm.category.dto.CategoryDto;
 import ru.practicum.ewm.category.service.CategoryService;
 import ru.practicum.ewm.category.dto.NewCategoryDto;
+import ru.practicum.ewm.comment.dto.CommentDto;
+import ru.practicum.ewm.comment.service.CommentService;
+import ru.practicum.ewm.comment.constants.CommentStatus;
 import ru.practicum.ewm.compilation.dto.CompilationDto;
 import ru.practicum.ewm.compilation.service.CompilationService;
 import ru.practicum.ewm.compilation.dto.NewCompilationDto;
@@ -32,6 +35,7 @@ public class AdminController {
     private final CategoryService categoryService;
     private final EventService eventService;
     private final CompilationService compilationService;
+    private final CommentService commentService;
 
     @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
@@ -110,5 +114,18 @@ public class AdminController {
     @ResponseStatus(HttpStatus.OK)
     public CompilationDto updateCompilation(@PathVariable Long compId, @Valid @RequestBody UpdateCompilationDto updateCompilationDto) {
         return compilationService.updateCompilation(compId, updateCompilationDto);
+    }
+
+    @GetMapping("/comments/{commentId}")
+    @ResponseStatus(HttpStatus.OK)
+    public CommentDto getCommentByAdmin(@PathVariable Long commentId) {
+        return commentService.getCommentByAdmin(commentId);
+    }
+
+
+    @PatchMapping("/comments/{commentId}")
+    @ResponseStatus(HttpStatus.OK)
+    public CommentDto approvingComment(@PathVariable Long commentId, @RequestParam CommentStatus status) {
+        return commentService.approvingComment(commentId, status);
     }
 }
