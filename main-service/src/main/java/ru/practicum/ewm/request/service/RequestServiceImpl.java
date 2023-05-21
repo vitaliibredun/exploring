@@ -120,6 +120,12 @@ public class RequestServiceImpl implements RequestService {
         return repository.findQuantityAllConfirmed(eventId);
     }
 
+    @Override
+    public Optional<Request> findRequest(Long userId, Long eventId) {
+        return repository.findByUserAndEvent(userId, eventId);
+    }
+
+
     private List<RequestToEvent> collectConfirmedRequests(List<Request> requests, Integer lastForConfirm) {
         int max = requests.size();
 
@@ -197,7 +203,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     private Event checkOwnerOfEvent(Long userId, Long eventId) {
-        Event event = eventService.getEventById(eventId);
+        Event event = eventService.findEventById(eventId);
         if (!Objects.equals(event.getInitiator().getId(), userId)) {
             log.error("The user with id = {} is not owner of the event with id = {}", userId, eventId);
             throw new ConflictException("The user is not owner of the event");
@@ -262,7 +268,7 @@ public class RequestServiceImpl implements RequestService {
             throw new BadRequestException("The eventId is not present");
         }
 
-        Event event = eventService.getEventById(eventId);
+        Event event = eventService.findEventById(eventId);
         Long allConfirmed = repository.findQuantityAllConfirmed(eventId);
 
         Long eventLimit = event.getParticipantLimit();

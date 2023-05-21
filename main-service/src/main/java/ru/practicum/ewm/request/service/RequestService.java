@@ -3,8 +3,10 @@ package ru.practicum.ewm.request.service;
 import ru.practicum.ewm.request.dto.RequestToEvent;
 import ru.practicum.ewm.request.dto.EventRequestResult;
 import ru.practicum.ewm.request.dto.EventRequestStatus;
+import ru.practicum.ewm.request.model.Request;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface RequestService {
 
@@ -19,4 +21,6 @@ public interface RequestService {
     List<RequestToEvent> getAllRequestsToEventsByUser(Long userId);
 
     Long findQuantityAllConfirmed(Long eventId);
+
+    Optional<Request> findRequest(Long userId, Long eventId);
 }
