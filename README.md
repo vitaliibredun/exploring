@@ -1,13 +1,11 @@
 # Social media 
 
-This is a Spring Boot social media application where you can find a friend, common films or films based on rates
+This is the backend code for a event sharing application, which enables users to share and manage events.
   
 ## Features:	
-- Create a user
-- Add a friend
-- Add a film 
-- Add like to film
-- View list of films based on rates
+- Event Management: users can create, update, and delete events, as well as view event details.
+- User Interaction: Users can join and leave events.
+- Microservices Architecture: The application is designed with a microservices architecture, where there is a separate 'stats' service responsible for collecting data from the main service.
 
 ## Technologies
 * Spring Boot
@@ -20,14 +18,12 @@ This is a Spring Boot social media application where you can find a friend, comm
 - PostgreSQL
  
 ## Getting Started
-To get started with this project, you will need to have the following installed on your local machine:
+To get started with this project:
 
-* JDK 11+
-* Maven or another build automation tool 
-
-To build and run the project, follow these steps:
-
-* Clone the repository: `git clone https://github.com/vitaliibredun/Exploring.git`
+1. Clone the [repository](https://github.com/vitaliibredun/Exploring.git) to your local machine.
+2. Install Docker and Docker Compose if not already installed.
+3. Navigate to the project directory and run `docker-compose up` to start the application and database containers.
+4. Access the application via the provided [endpoints]().
 
 ## Dependencies
 
