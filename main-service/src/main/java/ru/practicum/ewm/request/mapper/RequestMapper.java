@@ -1,37 +1,20 @@
 package ru.practicum.ewm.request.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
 import ru.practicum.ewm.request.dto.EventRequestResult;
 import ru.practicum.ewm.request.dto.RequestToEvent;
 import ru.practicum.ewm.request.model.Request;
 
 import java.util.List;
 
-@Mapper
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface RequestMapper {
-    default RequestToEvent toDto(Request request) {
-        if (request == null) {
-            return null;
-        }
 
-        RequestToEvent.RequestToEventBuilder builder = RequestToEvent.builder();
+    @Mapping(target = "event", source = "request.event.id")
+    @Mapping(target = "requester", source = "request.requester.id")
+    RequestToEvent toDto(Request request);
 
-        builder.id(request.getId());
-        builder.created(request.getCreated());
-        builder.event(request.getEvent().getId());
-        builder.requester(request.getRequester().getId());
-        builder.status(request.getStatus());
-
-        return builder.build();
-    }
-
-    default EventRequestResult toDto(List<RequestToEvent> confirmedRequests, List<RequestToEvent> rejectedRequests) {
-
-        EventRequestResult.EventRequestResultBuilder builder = EventRequestResult.builder();
-
-        builder.confirmedRequests(confirmedRequests);
-        builder.rejectedRequests(rejectedRequests);
-
-        return builder.build();
-    }
+    EventRequestResult toDto(List<RequestToEvent> confirmedRequests, List<RequestToEvent> rejectedRequests);
 }
