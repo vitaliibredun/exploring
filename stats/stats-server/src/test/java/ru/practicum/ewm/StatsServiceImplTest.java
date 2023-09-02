@@ -1,6 +1,7 @@
 package ru.practicum.ewm;
 
 import lombok.RequiredArgsConstructor;
+import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.is;
+import static org.instancio.Select.field;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Transactional
@@ -34,17 +38,13 @@ public class StatsServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        LocalDateTime dateTime1 = LocalDateTime.of(2023, 1, 5, 11, 30);
-        endpointHit1 = makeEndpointHit("/events", "192.168.0.1", dateTime1);
+        endpointHit1 = makeEndpointHit("/events", "192.168.0.1", LocalDateTime.now().minusDays(2L));
 
-        LocalDateTime dateTime2 = LocalDateTime.of(2023, 2, 3, 11, 0);
-        endpointHit2 = makeEndpointHit("/events/1", "192.168.1.1", dateTime2);
+        endpointHit2 = makeEndpointHit("/events/1", "192.168.1.1", LocalDateTime.now().minusDays(5L));
 
-        LocalDateTime dateTime3 = LocalDateTime.of(2023, 4, 8, 10, 45);
-        endpointHit3 = makeEndpointHit("/events/1", "192.168.1.1", dateTime3);
+        endpointHit3 = makeEndpointHit("/events/1", "192.168.1.1", LocalDateTime.now().minusDays(10L));
 
-        LocalDateTime dateTime4 = LocalDateTime.of(2023, 5, 11, 12, 45);
-        endpointHit4 = makeEndpointHit("/events", "192.168.1.2", dateTime4);
+        endpointHit4 = makeEndpointHit("/events", "192.168.1.2", LocalDateTime.now().minusDays(20L));
     }
 
     @Test
@@ -186,14 +186,13 @@ public class StatsServiceImplTest {
         return time.format(formatter);
     }
 
-    private EndpointHit makeEndpointHit(String uri, String ip, LocalDateTime timestamp) {
-        EndpointHit.EndpointHitBuilder builder = EndpointHit.builder();
+    private EndpointHit makeEndpointHit(String uri, String ip, LocalDateTime timeStamp) {
 
-        builder.app("ewm-main-service");
-        builder.uri(uri);
-        builder.ip(ip);
-        builder.timestamp(timestamp);
-
-        return builder.build();
+        return Instancio.of(EndpointHit.class)
+                .set(field(EndpointHit::getApp), "ewm-main-service")
+                .set(field(EndpointHit::getUri), uri)
+                .set(field(EndpointHit::getIp), ip)
+                .set(field(EndpointHit::getTimestamp), timeStamp)
+                .create();
     }
 }

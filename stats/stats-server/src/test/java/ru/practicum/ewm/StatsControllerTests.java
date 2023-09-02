@@ -1,6 +1,7 @@
 package ru.practicum.ewm;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.*;
+import static org.instancio.Select.field;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -37,11 +40,9 @@ public class StatsControllerTests {
 
     @BeforeEach
     void setUp() {
-        LocalDateTime dateTime1 = LocalDateTime.of(2023, 1, 5, 11, 30);
-        endpointHit = makeEndpointHit("/events", "192.168.0.1", dateTime1);
+        endpointHit = makeEndpointHit();
 
         viewStats1 = makeViewStats("/events", 1L);
-
         viewStats2 = makeViewStats("/events/1", 4L);
     }
 
@@ -51,7 +52,7 @@ public class StatsControllerTests {
                         .content(mapper.writeValueAsString(endpointHit))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     @Test
@@ -77,23 +78,21 @@ public class StatsControllerTests {
     }
 
     private ViewStats makeViewStats(String uri, Long hits) {
-        ViewStats.ViewStatsBuilder builder = ViewStats.builder();
 
-        builder.app("ewm-main-service");
-        builder.uri(uri);
-        builder.hits(hits);
-
-        return builder.build();
+        return Instancio.of(ViewStats.class)
+                .set(field(ViewStats::getApp), "ewm-main-service")
+                .set(field(ViewStats::getUri), uri)
+                .set(field(ViewStats::getHits), hits)
+                .create();
     }
 
-    private EndpointHit makeEndpointHit(String uri, String ip, LocalDateTime timestamp) {
-        EndpointHit.EndpointHitBuilder builder = EndpointHit.builder();
+    private EndpointHit makeEndpointHit() {
 
-        builder.app("ewm-main-service");
-        builder.uri(uri);
-        builder.ip(ip);
-        builder.timestamp(timestamp);
-
-        return builder.build();
+        return Instancio.of(EndpointHit.class)
+                .set(field(EndpointHit::getApp), "ewm-main-service")
+                .set(field(EndpointHit::getUri), "/events")
+                .set(field(EndpointHit::getIp), "192.168.0.1")
+                .set(field(EndpointHit::getTimestamp), LocalDateTime.now().plusDays(10L))
+                .create();
     }
 }

@@ -1,6 +1,7 @@
 package ru.practicum.ewm.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.ewm.category.dto.CategoryDto;
+import ru.practicum.ewm.comment.service.CommentService;
 import ru.practicum.ewm.event.constants.EventState;
 import ru.practicum.ewm.event.dto.EventFullDto;
 import ru.practicum.ewm.event.dto.EventShortDto;
@@ -41,6 +43,8 @@ public class UserControllerTest {
     private EventService eventService;
     @MockBean
     private RequestService requestService;
+    @MockBean
+    private CommentService commentService;
     @Autowired
     private MockMvc mvc;
     @Autowired
@@ -63,7 +67,9 @@ public class UserControllerTest {
         requestToEvent1 = makeRequestToEvent(1L);
         requestToEvent2 = makeRequestToEvent(2L);
         eventRequestResult = makeEventRequestResult();
-        newEventDto = makeNewEventDto("new title");
+
+        newEventDto = Instancio.create(NewEventDto.class);
+
         updateEvent = makeUpdateEvent("the new one");
         eventRequestStatus = makeEventRequestStatus(1L);
     }

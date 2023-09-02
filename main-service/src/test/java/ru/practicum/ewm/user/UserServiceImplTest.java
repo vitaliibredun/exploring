@@ -1,6 +1,7 @@
 package ru.practicum.ewm.user;
 
 import lombok.RequiredArgsConstructor;
+import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.instancio.Select.field;
 
 @Transactional
 @SpringBootTest
@@ -34,12 +36,13 @@ public class UserServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        userDto1 = makeUserDto("John", "mail@my.com");
-        userDto2 = makeUserDto("Smith", "email@ne.com");
-        userDto3 = makeUserDto("Klark", "supermail@my.com");
-        userDto4 = makeUserDto("Kent", "for@me.com");
-        userDto5 = makeUserDto("Timmy", "timmy@timmy.com");
         resetIdColumns();
+
+        userDto1 = Instancio.of(UserDto.class).ignore(field(UserDto::getId)).create();
+        userDto2 = Instancio.of(UserDto.class).ignore(field(UserDto::getId)).create();
+        userDto3 = Instancio.of(UserDto.class).ignore(field(UserDto::getId)).create();
+        userDto4 = Instancio.of(UserDto.class).ignore(field(UserDto::getId)).create();
+        userDto5 = Instancio.of(UserDto.class).ignore(field(UserDto::getId)).create();
     }
 
     @Test
@@ -117,15 +120,6 @@ public class UserServiceImplTest {
         service.deleteUser(userFromRepository.getId());
 
         assertThat(repository.findAll(), empty());
-    }
-
-    private UserDto makeUserDto(String name, String email) {
-        UserDto.UserDtoBuilder builder = UserDto.builder();
-
-        builder.name(name);
-        builder.email(email);
-
-        return builder.build();
     }
 
     private void resetIdColumns() {

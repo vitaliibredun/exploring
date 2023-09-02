@@ -1,6 +1,7 @@
 package ru.practicum.ewm.compilation;
 
 import lombok.RequiredArgsConstructor;
+import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,6 @@ import ru.practicum.ewm.event.dto.EventShortDto;
 import ru.practicum.ewm.event.dto.NewEventDto;
 import ru.practicum.ewm.event.service.EventService;
 import ru.practicum.ewm.exception.NotExistsException;
-import ru.practicum.ewm.location.dto.LocationDto;
 import ru.practicum.ewm.user.dto.UserDto;
 import ru.practicum.ewm.user.service.UserService;
 
@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.is;
+import static org.instancio.Select.field;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Transactional
@@ -54,31 +55,32 @@ public class CompilationServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        NewCategoryDto newCategoryDto1 = makeCategory("travel");
-        NewCategoryDto newCategoryDto2 = makeCategory("sport");
-        NewCategoryDto newCategoryDto3 = makeCategory("party");
+        NewCategoryDto newCategoryDto1 = Instancio.create(NewCategoryDto.class);
+        NewCategoryDto newCategoryDto2 = Instancio.create(NewCategoryDto.class);
+        NewCategoryDto newCategoryDto3 = Instancio.create(NewCategoryDto.class);
+
         categoryService.addCategory(newCategoryDto1);
         categoryService.addCategory(newCategoryDto2);
         categoryService.addCategory(newCategoryDto3);
 
-        UserDto userDto = makeUserDto("John", "my@mail.com");
+        UserDto userDto = Instancio.of(UserDto.class).ignore(field(UserDto::getId)).create();
         userService.addUser(userDto);
 
-        NewEventDto newEventDto1 = makeNewEventDto("title", 1L);
-        NewEventDto newEventDto2 = makeNewEventDto("another title", 1L);
-        NewEventDto newEventDto3 = makeNewEventDto("another one", 2L);
-        NewEventDto newEventDto4 = makeNewEventDto("another title one", 2L);
-        NewEventDto newEventDto5 = makeNewEventDto("the last one", 3L);
+        NewEventDto newEventDto1 = makeNewEventDto(1L);
+        NewEventDto newEventDto2 = makeNewEventDto(1L);
+        NewEventDto newEventDto3 = makeNewEventDto(2L);
+        NewEventDto newEventDto4 = makeNewEventDto(2L);
+        NewEventDto newEventDto5 = makeNewEventDto(3L);
         eventService.addEvent(1L, newEventDto1);
         eventService.addEvent(1L, newEventDto2);
         eventService.addEvent(1L, newEventDto3);
         eventService.addEvent(1L, newEventDto4);
         eventService.addEvent(1L, newEventDto5);
 
-        newCompilationDto1 = makeNewCompilationDto("title", true);
-        newCompilationDto2 = makeNewCompilationDto("new title", false);
-        newCompilationDto3 = makeNewCompilationDto("another title", true);
-        updateCompilationDto = makeUpdateCompilationDto("new title", false);
+        newCompilationDto1 = makeNewCompilationDto();
+        newCompilationDto2 = makeNewCompilationDto();
+        newCompilationDto3 = makeNewCompilationDto();
+        updateCompilationDto = makeUpdateCompilationDto();
 
         resetIdColumns();
     }
@@ -169,7 +171,7 @@ public class CompilationServiceImplTest {
 
     @Test
     void getCompilationsTest() {
-        Integer expectedSize = 2;
+        Integer expectedSize = 3;
         Boolean pinned = true;
         PageRequest pageRequest = PageRequest.of(0, 10);
         List<Long> list1 = new ArrayList<>(newCompilationDto1.getEvents());
@@ -187,7 +189,7 @@ public class CompilationServiceImplTest {
 
         List<CompilationDto> compilations = compilationService.getCompilations(pinned, pageRequest);
         CompilationDto compilationFromRepository1 = compilations.get(0);
-        CompilationDto compilationFromRepository2 = compilations.get(1);
+        CompilationDto compilationFromRepository2 = compilations.get(2);
         List<Long> eventsByCompilation1 = compilationFromRepository1.getEvents()
                 .stream()
                 .map(EventShortDto::getId)
@@ -235,57 +237,27 @@ public class CompilationServiceImplTest {
         assertThat(secondEventId, is(secondEventIdFromRepository));
     }
 
-    private UserDto makeUserDto(String name, String email) {
-        UserDto.UserDtoBuilder builder = UserDto.builder();
+    private NewEventDto makeNewEventDto(Long category) {
 
-        builder.name(name);
-        builder.email(email);
-
-        return builder.build();
+        return Instancio.of(NewEventDto.class)
+                .set(field(NewEventDto::getCategory), category)
+                .set(field(NewEventDto::getEventDate),LocalDateTime.now().plusDays(1))
+                .create();
     }
 
-    private NewCategoryDto makeCategory(String name) {
-        NewCategoryDto.NewCategoryDtoBuilder builder = NewCategoryDto.builder();
+    private UpdateCompilationDto makeUpdateCompilationDto() {
 
-        builder.name(name);
-
-        return builder.build();
+        return Instancio.of(UpdateCompilationDto.class)
+                .set(field(UpdateCompilationDto::getEvents), Set.of(3L, 4L, 5L))
+                .set(field(UpdateCompilationDto::getPinned), false)
+                .create();
     }
 
-    private NewEventDto makeNewEventDto(String title, Long category) {
-        NewEventDto.NewEventDtoBuilder builder = NewEventDto.builder();
-
-        builder.annotation("annotation");
-        builder.eventDate(LocalDateTime.now().plusDays(1));
-        builder.location(LocationDto.builder().lat(38.3234F).lon(84.342F).build());
-        builder.category(category);
-        builder.description("description");
-        builder.paid(true);
-        builder.participantLimit(0L);
-        builder.requestModeration(false);
-        builder.title(title);
-
-        return builder.build();
-    }
-
-    private UpdateCompilationDto makeUpdateCompilationDto(String title, Boolean pinned) {
-        UpdateCompilationDto.UpdateCompilationDtoBuilder builder = UpdateCompilationDto.builder();
-
-        builder.pinned(pinned);
-        builder.title(title);
-        builder.events(Set.of(3L, 4L, 5L));
-
-        return builder.build();
-    }
-
-    private NewCompilationDto makeNewCompilationDto(String title, Boolean pinned) {
-        NewCompilationDto.NewCompilationDtoBuilder builder = NewCompilationDto.builder();
-
-        builder.pinned(pinned);
-        builder.title(title);
-        builder.events(Set.of(1L, 2L, 3L, 4L, 5L));
-
-        return builder.build();
+    private NewCompilationDto makeNewCompilationDto() {
+        return Instancio.of(NewCompilationDto.class)
+                .set(field(NewCompilationDto::getEvents), Set.of(1L, 2L, 3L, 4L, 5L))
+                .set(field(NewCompilationDto::getPinned),true)
+                .create();
     }
 
     private void resetIdColumns() {

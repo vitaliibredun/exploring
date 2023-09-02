@@ -1,6 +1,7 @@
 package ru.practicum.ewm.admin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,27 +10,26 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.ewm.admin.controller.AdminController;
+import ru.practicum.ewm.admin.dto.UpdateEventAdmin;
 import ru.practicum.ewm.category.dto.CategoryDto;
 import ru.practicum.ewm.category.dto.NewCategoryDto;
 import ru.practicum.ewm.category.service.CategoryService;
+import ru.practicum.ewm.comment.service.CommentService;
 import ru.practicum.ewm.compilation.dto.CompilationDto;
 import ru.practicum.ewm.compilation.service.CompilationService;
 import ru.practicum.ewm.compilation.dto.NewCompilationDto;
-import ru.practicum.ewm.event.constants.EventState;
 import ru.practicum.ewm.event.dto.EventFullDto;
-import ru.practicum.ewm.event.dto.EventShortDto;
-import ru.practicum.ewm.event.dto.UpdateEvent;
 import ru.practicum.ewm.event.service.EventService;
-import ru.practicum.ewm.location.dto.LocationDto;
 import ru.practicum.ewm.user.dto.UserDto;
-import ru.practicum.ewm.user.dto.UserShortDto;
 import ru.practicum.ewm.user.service.UserService;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Set;
 
 import static org.hamcrest.Matchers.is;
+import static org.instancio.Select.field;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -46,6 +46,8 @@ public class AdminControllerTest {
     private EventService eventService;
     @MockBean
     private CompilationService compilationService;
+    @MockBean
+    private CommentService commentService;
     @Autowired
     private MockMvc mvc;
     @Autowired
@@ -56,21 +58,27 @@ public class AdminControllerTest {
     private NewCategoryDto newCategoryDto;
     private EventFullDto eventFullDto1;
     private EventFullDto eventFullDto2;
-    private UpdateEvent updateEvent;
+    private UpdateEventAdmin updateEvent;
     private CompilationDto compilationDto;
     private NewCompilationDto newCompilationDto;
 
     @BeforeEach
     void setUp() {
-        userDto1 = makeUserDto("John", "mail@my.com");
-        userDto2 = makeUserDto("Smith", "myemail@ne.com");
-        categoryDto = makeCategoryDto("category");
-        newCategoryDto = makeNewCategoryDto("category");
-        eventFullDto1 = makeEventFullDto("some title");
-        eventFullDto2 = makeEventFullDto("another title");
-        updateEvent = makeUpdateEvent("the new one");
-        compilationDto = makeCompilationDto("title", true);
-        newCompilationDto = makeNewCompilationDto("new title", false);
+        userDto1 = createUserDto("John");
+        userDto2 = createUserDto("Timmy");
+
+        categoryDto = Instancio.create(CategoryDto.class);
+
+        newCategoryDto = Instancio.create(NewCategoryDto.class);
+
+        eventFullDto1 = Instancio.create(EventFullDto.class);
+        eventFullDto2 = Instancio.create(EventFullDto.class);
+
+        updateEvent = Instancio.create(UpdateEventAdmin.class);
+
+        compilationDto = Instancio.create(CompilationDto.class);
+
+        newCompilationDto = Instancio.create(NewCompilationDto.class);
     }
 
     @Test
@@ -173,7 +181,7 @@ public class AdminControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.annotation", is(eventFullDto1.getAnnotation())))
                 .andExpect(jsonPath("$.description", is(eventFullDto1.getDescription())))
-                .andExpect(jsonPath("$.eventDate", is(eventFullDto1.getEventDate())))
+                .andExpect(jsonPath("$.eventDate", is(getTimeFormat(eventFullDto1.getEventDate()))))
                 .andExpect(jsonPath("$.requestModeration", is(eventFullDto1.getRequestModeration())));
     }
 
@@ -205,11 +213,11 @@ public class AdminControllerTest {
                 .andExpect(jsonPath("size()", is(expectedSize)))
                 .andExpect(jsonPath("$.[0].annotation", is(eventFullDto1.getAnnotation())))
                 .andExpect(jsonPath("$.[0].description", is(eventFullDto1.getDescription())))
-                .andExpect(jsonPath("$.[0].eventDate", is(eventFullDto1.getEventDate())))
+                .andExpect(jsonPath("$.[0].eventDate", is(getTimeFormat(eventFullDto1.getEventDate()))))
                 .andExpect(jsonPath("$.[0].requestModeration", is(eventFullDto1.getRequestModeration())))
                 .andExpect(jsonPath("$.[1].annotation", is(eventFullDto2.getAnnotation())))
                 .andExpect(jsonPath("$.[1].description", is(eventFullDto2.getDescription())))
-                .andExpect(jsonPath("$.[1].eventDate", is(eventFullDto2.getEventDate())))
+                .andExpect(jsonPath("$.[1].eventDate", is(getTimeFormat(eventFullDto2.getEventDate()))))
                 .andExpect(jsonPath("$.[1].requestModeration", is(eventFullDto2.getRequestModeration())));
     }
 
@@ -256,83 +264,15 @@ public class AdminControllerTest {
                 .andExpect(jsonPath("$.title", is(compilationDto.getTitle())));
     }
 
-    private NewCompilationDto makeNewCompilationDto(String title, Boolean pinned) {
-        NewCompilationDto.NewCompilationDtoBuilder builder = NewCompilationDto.builder();
-
-        builder.pinned(pinned);
-        builder.title(title);
-        builder.events(Set.of(1L, 2L));
-
-        return builder.build();
+    private String getTimeFormat(LocalDateTime localDateTime) {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return localDateTime.format(dateTimeFormatter);
     }
 
-    private CompilationDto makeCompilationDto(String title, Boolean pinned) {
-        CompilationDto.CompilationDtoBuilder builder = CompilationDto.builder();
-
-        builder.id(1L);
-        builder.pinned(pinned);
-        builder.title(title);
-        builder.events(List.of(EventShortDto.builder().build()));
-
-        return builder.build();
-    }
-
-    private UpdateEvent makeUpdateEvent(String title) {
-        UpdateEvent.UpdateEventBuilder builder = UpdateEvent.builder();
-
-        builder.annotation("annotation");
-        builder.category(1L);
-        builder.description("description");
-        builder.location(LocationDto.builder().lat(55.754167F).lon(37.6232F).build());
-        builder.paid(true);
-        builder.participantLimit(10L);
-        builder.requestModeration(true);
-        builder.title(title);
-
-        return builder.build();
-    }
-
-    private EventFullDto makeEventFullDto(String title) {
-        EventFullDto.EventFullDtoBuilder builder = EventFullDto.builder();
-
-        builder.id(1L);
-        builder.annotation("annotation");
-        builder.category(CategoryDto.builder().id(1L).name("name").build());
-        builder.description("description");
-        builder.initiator(UserShortDto.builder().id(1L).name("John").build());
-        builder.location(LocationDto.builder().lat(55.754167F).lon(37.6232F).build());
-        builder.paid(true);
-        builder.participantLimit(10L);
-        builder.requestModeration(true);
-        builder.state(EventState.PENDING);
-        builder.title(title);
-
-        return builder.build();
-    }
-
-    private CategoryDto makeCategoryDto(String name) {
-        CategoryDto.CategoryDtoBuilder builder = CategoryDto.builder();
-
-        builder.id(1L);
-        builder.name(name);
-
-        return builder.build();
-    }
-
-    private NewCategoryDto makeNewCategoryDto(String name) {
-        NewCategoryDto.NewCategoryDtoBuilder builder = NewCategoryDto.builder();
-
-        builder.name(name);
-
-        return builder.build();
-    }
-
-    private UserDto makeUserDto(String name, String email) {
-        UserDto.UserDtoBuilder builder = UserDto.builder();
-
-        builder.name(name);
-        builder.email(email);
-
-        return builder.build();
+    private UserDto createUserDto(String name) {
+        return Instancio.of(UserDto.class)
+                .set(field(UserDto::getName), name)
+                .set(field(UserDto::getEmail), "user@gmail.com")
+                .create();
     }
 }

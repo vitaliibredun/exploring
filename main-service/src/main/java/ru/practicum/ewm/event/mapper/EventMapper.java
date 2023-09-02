@@ -20,6 +20,8 @@ public interface EventMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "category", source = "category")
+    @Mapping(target = "initiator", source = "user")
+    @Mapping(target = "location", source = "location")
     Event toModel(NewEventDto newEventDto, Category category, Location location, User user);
 
     @Mapping(target = "category", source = "event", qualifiedByName = "createCategory")
