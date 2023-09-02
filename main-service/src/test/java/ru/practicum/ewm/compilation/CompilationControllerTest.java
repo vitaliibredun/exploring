@@ -1,6 +1,7 @@
 package ru.practicum.ewm.compilation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.ewm.compilation.controller.CompilationController;
 import ru.practicum.ewm.compilation.dto.CompilationDto;
 import ru.practicum.ewm.compilation.service.CompilationService;
-import ru.practicum.ewm.event.dto.EventShortDto;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -36,8 +36,8 @@ public class CompilationControllerTest {
 
     @BeforeEach
     void setUp() {
-        compilationDto1 = makeCompilationDto("title", true);
-        compilationDto2 = makeCompilationDto("another title", false);
+        compilationDto1 = Instancio.create(CompilationDto.class);
+        compilationDto2 = Instancio.create(CompilationDto.class);
     }
 
     @Test
@@ -78,17 +78,4 @@ public class CompilationControllerTest {
                 .andExpect(jsonPath("$.pinned", is(compilationDto1.getPinned())))
                 .andExpect(jsonPath("$.title", is(compilationDto1.getTitle())));
     }
-
-    private CompilationDto makeCompilationDto(String title, Boolean pinned) {
-        CompilationDto.CompilationDtoBuilder builder = CompilationDto.builder();
-
-        builder.id(1L);
-        builder.pinned(pinned);
-        builder.title(title);
-        builder.events(List.of(EventShortDto.builder().build()));
-
-        return builder.build();
-    }
 }
-
-

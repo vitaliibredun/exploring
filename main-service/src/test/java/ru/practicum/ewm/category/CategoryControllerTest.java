@@ -1,6 +1,7 @@
 package ru.practicum.ewm.category;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +36,8 @@ public class CategoryControllerTest {
 
     @BeforeEach
     void setUp() {
-        categoryDto1 = makeCategoryDto("category");
-        categoryDto2 = makeCategoryDto(" another category");
+        categoryDto1 = Instancio.create(CategoryDto.class);
+        categoryDto2 = Instancio.create(CategoryDto.class);
     }
 
     @Test
@@ -67,14 +68,5 @@ public class CategoryControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(categoryDto1.getId().intValue())))
                 .andExpect(jsonPath("$.name", is(categoryDto1.getName())));
-    }
-
-    private CategoryDto makeCategoryDto(String name) {
-        CategoryDto.CategoryDtoBuilder builder = CategoryDto.builder();
-
-        builder.id(1L);
-        builder.name(name);
-
-        return builder.build();
     }
 }

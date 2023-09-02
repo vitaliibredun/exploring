@@ -1,6 +1,7 @@
 package ru.practicum.ewm.request;
 
 import lombok.RequiredArgsConstructor;
+import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,7 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.is;
+import static org.instancio.Select.field;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Transactional
@@ -59,13 +61,17 @@ public class RequestServiceImplTest {
     void setUp() {
         resetIdColumns();
 
-        NewCategoryDto newCategoryDto = makeCategory("travel");
+        NewCategoryDto newCategoryDto = Instancio.create(NewCategoryDto.class);
+
         categoryService.addCategory(newCategoryDto);
-        UserDto userDto1 = makeUserDto("John", "mail@email.com");
-        UserDto userDto2 = makeUserDto("Timmy", "timmy@timmy.com");
-        UserDto userDto3 = makeUserDto("Kent", "klark@kent.com");
-        UserDto userDto4 = makeUserDto("Smith", "my@mail.com");
+
+        UserDto userDto1 = Instancio.of(UserDto.class).ignore(field(UserDto::getId)).create();
+        UserDto userDto2 = Instancio.of(UserDto.class).ignore(field(UserDto::getId)).create();
+        UserDto userDto3 = Instancio.of(UserDto.class).ignore(field(UserDto::getId)).create();
+        UserDto userDto4 = Instancio.of(UserDto.class).ignore(field(UserDto::getId)).create();
+
         UserDto user1 = userService.addUser(userDto1);
+
         userService.addUser(userDto2);
         userService.addUser(userDto3);
         userService.addUser(userDto4);
@@ -73,9 +79,11 @@ public class RequestServiceImplTest {
         newEventDto1 = makeNewEventDto("title");
         newEventDto2 = makeNewEventDto("another title");
         newEventDto3 = makeNewEventDto("the last title");
+
         eventService.addEvent(user1.getId(), newEventDto1);
         eventService.addEvent(user1.getId(), newEventDto2);
         eventService.addEvent(user1.getId(), newEventDto3);
+
         event1 = eventRepository.findById(1L).orElseThrow();
         event2 = eventRepository.findById(2L).orElseThrow();
         event3 = eventRepository.findById(3L).orElseThrow();
@@ -475,23 +483,6 @@ public class RequestServiceImplTest {
 
         builder.requestIds(requestIds);
         builder.status(status);
-
-        return builder.build();
-    }
-
-    private UserDto makeUserDto(String name, String email) {
-        UserDto.UserDtoBuilder builder = UserDto.builder();
-
-        builder.name(name);
-        builder.email(email);
-
-        return builder.build();
-    }
-
-    private NewCategoryDto makeCategory(String name) {
-        NewCategoryDto.NewCategoryDtoBuilder builder = NewCategoryDto.builder();
-
-        builder.name(name);
 
         return builder.build();
     }

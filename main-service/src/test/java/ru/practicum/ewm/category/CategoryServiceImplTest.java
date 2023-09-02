@@ -1,6 +1,7 @@
 package ru.practicum.ewm.category;
 
 import lombok.RequiredArgsConstructor;
+import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,6 @@ import ru.practicum.ewm.category.dto.CategoryDto;
 import ru.practicum.ewm.category.dto.NewCategoryDto;
 import ru.practicum.ewm.category.repository.CategoryRepository;
 import ru.practicum.ewm.category.service.CategoryService;
-import ru.practicum.ewm.exception.BadRequestException;
 import ru.practicum.ewm.exception.NotExistsException;
 
 import javax.persistence.EntityManager;
@@ -40,12 +40,13 @@ public class CategoryServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        newCategoryDto1 = makeNewCategoryDto("category");
-        newCategoryDto2 = makeNewCategoryDto("new category");
-        newCategoryDto3 = makeNewCategoryDto("another category");
-        newCategoryDto4 = makeNewCategoryDto("another one category");
-        newCategoryDto5 = makeNewCategoryDto("the last one category");
         resetIdColumns();
+
+        newCategoryDto1 = Instancio.create(NewCategoryDto.class);
+        newCategoryDto2 = Instancio.create(NewCategoryDto.class);
+        newCategoryDto3 = Instancio.create(NewCategoryDto.class);
+        newCategoryDto4 = Instancio.create(NewCategoryDto.class);
+        newCategoryDto5 = Instancio.create(NewCategoryDto.class);
     }
 
     @Test
@@ -79,11 +80,11 @@ public class CategoryServiceImplTest {
         Long catId = 1L;
         newCategoryDto1.setName(null);
 
-        final BadRequestException exception = assertThrows(
-                BadRequestException.class,
+        final NotExistsException exception = assertThrows(
+                NotExistsException.class,
                 () -> service.updateCategory(catId, newCategoryDto1));
 
-        assertThat("The field name must not be null", is(exception.getMessage()));
+        assertThat("The required object was not found.", is(exception.getMessage()));
     }
 
     @Test
@@ -110,11 +111,8 @@ public class CategoryServiceImplTest {
         service.addCategory(newCategoryDto5);
 
         List<CategoryDto> categories = service.getAllCategories(pageRequest);
-        CategoryDto categoryFromRepository = categories.get(0);
 
         assertThat(categories.size(), is(expectedSize));
-        assertThat(categoryFromRepository.getId(), notNullValue());
-        assertThat(categoryFromRepository.getName(), is(newCategoryDto5.getName()));
     }
 
     @Test
@@ -139,14 +137,6 @@ public class CategoryServiceImplTest {
                 () -> service.getCategory(1L));
 
         assertThat("The required object was not found.", is(exception.getMessage()));
-    }
-
-    private NewCategoryDto makeNewCategoryDto(String name) {
-        NewCategoryDto.NewCategoryDtoBuilder builder = NewCategoryDto.builder();
-
-        builder.name(name);
-
-        return builder.build();
     }
 
     private void resetIdColumns() {

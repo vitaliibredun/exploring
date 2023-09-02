@@ -1,6 +1,7 @@
 package ru.practicum.ewm.event;
 
 import lombok.RequiredArgsConstructor;
+import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.is;
+import static org.instancio.Select.field;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Transactional
@@ -59,15 +61,18 @@ public class EventServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        NewCategoryDto newCategoryDto1 = makeCategory("travel");
-        NewCategoryDto newCategoryDto2 = makeCategory("sport");
-        NewCategoryDto newCategoryDto3 = makeCategory("party");
+        NewCategoryDto newCategoryDto1 = Instancio.create(NewCategoryDto.class);
+        NewCategoryDto newCategoryDto2 = Instancio.create(NewCategoryDto.class);
+        NewCategoryDto newCategoryDto3 = Instancio.create(NewCategoryDto.class);
+
         categoryService.addCategory(newCategoryDto1);
         categoryService.addCategory(newCategoryDto2);
         categoryService.addCategory(newCategoryDto3);
-        UserDto userDto1 = makeUserDto("John", "my@mail.com");
-        UserDto userDto2 = makeUserDto("Smith", "mail@email.com");
-        UserDto userDto3 = makeUserDto("Timmy", "timmy@timmy.com");
+
+        UserDto userDto1 = Instancio.of(UserDto.class).ignore(field(UserDto::getId)).create();
+        UserDto userDto2 = Instancio.of(UserDto.class).ignore(field(UserDto::getId)).create();
+        UserDto userDto3 = Instancio.of(UserDto.class).ignore(field(UserDto::getId)).create();
+
         userService.addUser(userDto1);
         userService.addUser(userDto2);
         userService.addUser(userDto3);
@@ -179,19 +184,19 @@ public class EventServiceImplTest {
         assertThat("Event with id was not found", is(exception.getMessage()));
     }
 
-        @Test
-            void verifyNotOwnerOfEventException() {
-            Long userId = 1L;
-            Long eventId = 1L;
-            Long notOwner = 100L;
-            eventService.addEvent(userId, newEventDto1);
+    @Test
+    void verifyNotOwnerOfEventException() {
+        Long userId = 1L;
+        Long eventId = 1L;
+        Long notOwner = 100L;
+        eventService.addEvent(userId, newEventDto1);
 
-            final ConflictException exception = assertThrows(
-                    ConflictException.class,
-                    () -> eventService.updateEvent(notOwner, eventId, updateEvent));
+        final ConflictException exception = assertThrows(
+                ConflictException.class,
+                () -> eventService.updateEvent(notOwner, eventId, updateEvent));
 
-            assertThat("Only owner of event can makes changes", is(exception.getMessage()));
-        }
+        assertThat("Only owner of event can makes changes", is(exception.getMessage()));
+    }
 
     @Test
     void verifyChangePublishedEventException() {
